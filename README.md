@@ -56,7 +56,7 @@ Qualquer alteração dentro dela, e atualizado dentro do container php/nginx.
 
 
 ## Configurando Senhas/Banco de dados.
-Você pode definir uma senha tanto para o redis/mariadb.
+Você pode definir uma senha para o redis/mariadb.
 > **Nota**
 > Você precisa deletar o conteudo dentro da pasta `data/mysql` ou `data/redis`, mas faça um backup do banco de dados caso não deseje perder os registros.
 
@@ -107,7 +107,7 @@ docker compose -f "docker-compose.yml" up -d --build
 ```
 _Aguarde alguns segundos, ate tudo ser iniciado consulte com `docker ps`_
 
-Pronto! Agora você pode acessar http://localhost, caso sua aplicação esteja em uma VPS e possua um dominio. Você pode adiciona-lo e criar rehras personalizadas utilizando o NPM Web `http://ip_da_vps:81`, aponte para o proprio IP na porta **80**. Mas considere também que o DNS ja esteja configurado para o IP da maquina.
+Pronto! Agora você pode acessar http://localhost, caso sua aplicação esteja em uma VPS e possua um dominio. Você pode adiciona-lo e criar regras personalizadas utilizando o NPM Web `http://ip_da_vps:81`, aponte para o proprio IP na porta **80**. Mas considere também que o DNS ja esteja configurado para o IP da maquina.
 
 **Desligando todos os container:**
 ```bash
