@@ -1,0 +1,89 @@
+################################################
+#                                              #
+#           RNPM - BY HELLFIVEOSBORN           #
+#  REDIS - NGINX - PHP8/PHPMYADMIN - MARIADB   #
+#                                              #
+################################################
+
+version: "3.9"
+
+services:
+  npm:
+    build:
+      context: ./config/npm
+      dockerfile: Dockerfile
+    container_name: npm
+    hostname: npm
+    ports:
+      - "81:81" # Admin NGINX Port
+      - "80:80" # Public HTTP Port
+      - "443:443" # Public HTTPS Port
+    restart: unless-stopped
+    environment:
+      DB_MYSQL_HOST: mariadb
+      DB_MYSQL_NAME: "npm"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: root
+      DB_MYSQL_PASSWORD:
+    volumes:
+      - ./www:/var/www/html/ # Pasta compartilhada
+      - ./data/npm/letsencrypt:/etc/letsencrypt # Certificados
+      - ./data/npm:/data/nginx/proxy_host # Config's npm geradas 
+    depends_on:
+      - mariadb
+    links:
+      - php-fpm
+
+  php-fpm:
+    image: joseluisq/php-fpm:latest
+    container_name: php-fpm
+    hostname: php-fpm
+    environment:
+      - "ENV_SUBSTITUTION_ENABLE=true"
+      - "PHP_MEMORY_LIMIT=512M"
+      - "PHP_FPM_LISTEN=9090"
+      - "PHP_SESSION_GC_MAXLIFETIME=7200"
+    expose:
+      - "9090"
+    volumes:
+      - ./www:/var/www/html/
+
+  mariadb:
+    image: yobasystems/alpine-mariadb:latest
+    container_name: mariadb
+    hostname: mariadb
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      #MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: npm
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    hostname: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mariadb
+    depends_on:
+      - mariadb
+
+  redis:
+    image: bitnami/redis
+    container_name: redis
+    hostname: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    environment: #- REDIS_PASSWORD=dev
+
+    volumes:
+      - ./data/redis:/bitnami/redis/data
