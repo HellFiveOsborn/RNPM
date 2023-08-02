@@ -83,7 +83,8 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
-    environment: #- REDIS_PASSWORD=dev
+    #environment: 
+    #- REDIS_PASSWORD=dev
 
     volumes:
       - ./data/redis:/bitnami/redis/data
